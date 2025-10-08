@@ -84,7 +84,7 @@ def get_ai_analysis(data_for_ai, api_key):
         return f"Đã xảy ra lỗi không xác định: {e}"
 
 # *******************************************************************
-# --- ĐOẠN MÃ MỚI: CHỨC NĂNG CHATBOT GEMINI ---
+# --- CHỨC NĂNG CHATBOT GEMINI ĐÃ SỬA LỖI ---
 # *******************************************************************
 
 # Khởi tạo client và chat session (cached để duy trì phiên)
@@ -98,16 +98,14 @@ def get_chat_session(api_key):
             
         client = genai.Client(api_key=api_key)
         
-        # Cấu hình Chatbot với System Instruction
-        system_instruction = "Bạn là một trợ lý chatbot thân thiện và thông thái, chuyên tư vấn về các khái niệm kế toán, tài chính và phân tích doanh nghiệp. Trả lời bằng tiếng Việt."
-
+        # ĐÃ SỬA LỖI: client.chats.create() không còn tham số system_instruction
         chat_session = client.chats.create(
-            model='gemini-2.5-flash',
-            system_instruction=system_instruction
+            model='gemini-2.5-flash'
         )
         return chat_session, None
 
     except Exception as e:
+        # Thay đổi thông báo lỗi để rõ ràng hơn nếu lỗi không phải do API Key
         return None, f"Lỗi khởi tạo Chat: {e}"
 
 def chat_interface():
@@ -127,10 +125,10 @@ def chat_interface():
     # Khởi tạo lịch sử chat trong Streamlit session state
     if "messages" not in st.session_state:
         st.session_state.messages = []
-        # Thêm tin nhắn chào mừng mặc định
+        # Thêm tin nhắn chào mừng mặc định, thiết lập persona tại đây
         st.session_state.messages.append({
             "role": "model", 
-            "content": "Chào bạn! Tôi là trợ lý Gemini, chuyên về tài chính và kế toán. Bạn có câu hỏi gì không?"
+            "content": "Chào bạn! Tôi là trợ lý Gemini, chuyên tư vấn về tài chính, kế toán và phân tích doanh nghiệp. Bạn có câu hỏi gì không?"
         })
 
     # Hiển thị lịch sử chat
