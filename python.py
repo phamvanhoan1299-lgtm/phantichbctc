@@ -159,7 +159,13 @@ def chat_interface():
                     st.error(error_msg)
                     st.session_state.messages.append({"role": "model", "content": error_msg})
                 except Exception as e:
-                    error_msg = f"Lỗi không xác định: {e}"
+                    # Bắt lỗi "client has been closed" và xóa cache
+                    if "client has been closed" in str(e):
+                        st.cache_resource.clear()
+                        error_msg = "Lỗi phiên Chat: Phiên chat đã bị đóng do ứng dụng chạy lại. Vui lòng **refresh trang** hoặc **thử gửi lại tin nhắn** để khởi tạo phiên mới."
+                    else:
+                        error_msg = f"Lỗi không xác định: {e}"
+                        
                     st.error(error_msg)
                     st.session_state.messages.append({"role": "model", "content": error_msg})
 
